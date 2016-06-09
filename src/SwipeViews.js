@@ -26,6 +26,7 @@ export default class SwipeViews extends React.Component {
 
   componentDidMount() {
     this._selectIndex();
+    document.getElementById("SwipeViewsInk").style.width=document.getElementById("tab-id0").clientWidth;
   }
 
   componentWillReceiveProps(nextProps) {
@@ -34,8 +35,6 @@ export default class SwipeViews extends React.Component {
 
   render() {
     const swipeViewsInkStyle = {
-      width: this.state.pageWidthPerCent + '%',
-      marginLeft: this.state.translation + '%',
       transitionProperty: this.state.animate ? 'all' : 'none',
     };
     const swipeViewsStyle = {
@@ -48,13 +47,14 @@ export default class SwipeViews extends React.Component {
 
     return (
       <div className="SwipeViewsContainer">
-        <header className="SwipeViewsHeader">
+        <header className="SwipeViewsHeader" id="SwipeViewsHeader">
           <div className="SwipeViewsTabs">
             <ul>
               {React.Children.map(this.props.children, (child, index) => {
                 const className = (index === this.state.selectedIndex ? 'active' : '');
                 return (
                   <li
+                  id={'tab-id'+index}
                     key={index}
                     className={'SwipeViewsTab ' + className}
                     onClick={this._handleClick.bind(this, index)}
@@ -64,7 +64,7 @@ export default class SwipeViews extends React.Component {
                 );
               })}
             </ul>
-            <div className="SwipeViewsInk" style={swipeViewsInkStyle} />
+            <div className="SwipeViewsInk" id="SwipeViewsInk" style={swipeViewsInkStyle} />
           </div>
         </header>
         <div
@@ -78,7 +78,7 @@ export default class SwipeViews extends React.Component {
               <div
                 className="SwipeView"
                 key={index}
-                style={{width: this.state.pageWidthPerCent + '%'}}
+                style={{width: '100%'}}
                 onScroll={this._handleScroll.bind(this)}
               >
                 {child.props.children}
@@ -180,6 +180,11 @@ export default class SwipeViews extends React.Component {
     if (event.target.localName === 'li') {
       this._transitionTo(selectedIndex);
     }
+    const left=document.getElementById("tab-id"+selectedIndex).offsetLeft;
+    document.getElementById("SwipeViewsInk").style.width=document.getElementById("tab-id"+selectedIndex).clientWidth;
+    document.getElementById("SwipeViewsInk").style.marginLeft=left;
+    const sLeft=parseInt((left*2)/document.body.clientWidth);
+    document.getElementById("SwipeViewsHeader").scrollLeft=sLeft*(document.body.clientWidth/2);
   }
 
   _handleTouchEnd() {
@@ -191,6 +196,11 @@ export default class SwipeViews extends React.Component {
       clientX: null,
       animate: true,
     }, this._transitionTo(selectedIndex));
+    const left=document.getElementById("tab-id"+selectedIndex).offsetLeft;
+    document.getElementById("SwipeViewsInk").style.width=document.getElementById("tab-id"+selectedIndex).clientWidth;
+    document.getElementById("SwipeViewsInk").style.marginLeft=left;
+    const sLeft=parseInt((left*2)/document.body.clientWidth);
+    document.getElementById("SwipeViewsHeader").scrollLeft=sLeft*(document.body.clientWidth/2);
   }
 
   _handleScroll() {
